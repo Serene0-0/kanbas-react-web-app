@@ -120,6 +120,12 @@ export default function AssignmentEditor() {
             </td>
           </tr>
         </table>
+
+        <hr/>
+        <div style={{display: "flex", justifyContent: "flex-end"}}>
+          <button id="wd-cancel">Cancel</button>
+          <button id="wd-save" style={{marginLeft: "5pt"}}>Save</button>
+        </div>
       </div>
   );}
   
