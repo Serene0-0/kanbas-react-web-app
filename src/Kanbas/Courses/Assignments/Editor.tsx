@@ -112,19 +112,27 @@ export default function AssignmentEditor() {
             <input type="date" id="wd-due-date" value="2024-05-13" className="form-control" />
             <br />
 
-            <label htmlFor="wd-available-from" className="col-sm-3 col-form-label fw-bold">
-              Available from
-            </label><br />
-            <input type="date" id="wd-available-from" value="2024-05-06" className="form-control" />
-            <br />
-
-            <label htmlFor="wd-available-until" className="col-sm-3 col-form-label fw-bold">
-              Until
-            </label><br />
-            <input type="date" id="wd-available-until" value="2024-05-20" className="form-control" /> 
-            <br />
-
-
+            <div className="row mb-2">
+              <div className="col-md-6">
+                <label htmlFor="wd-available-from" className="col-form-label fw-bold">
+                  Available from
+                </label>
+              </div>
+              <div className="col-md-6">
+                <label htmlFor="wd-available-until" className="col-form-label fw-bold">
+                  Until
+                </label>
+              </div>
+            </div>
+            
+            <div className="row">
+              <div className="col-md-6">
+                <input type="date" id="wd-available-from" value="2024-05-06" className="form-control" />
+              </div>  
+              <div className="col-md-6">
+              <input type="date" id="wd-available-until" value="2024-05-20" className="form-control" />        
+              </div>  
+            </div>
           </div>
         </div>
 
