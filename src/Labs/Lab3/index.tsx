@@ -30,6 +30,7 @@ import Add from "./Add";
 import Square from "./Square";
 import Highlight from "./Highlight";
 import PathParameters from "./PathParameters";
+import TodoItem from "./todos/TodoItem";
 
 export default function Lab3() {
     console.log('Hello World!')
@@ -58,6 +59,7 @@ export default function Lab3() {
         <FilterFunction/>
         <JsonStringify/>
         <House/>
+        <TodoItem/>
         <TodoList/>
         <Spreading/>
         <Destructing/>
