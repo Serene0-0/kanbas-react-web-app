@@ -3,17 +3,24 @@ import {BsGripVertical} from 'react-icons/bs';
 import AssignmentControlButtons from "./AssignmentControlButtons";
 import LessonControlButtons from "./LessonControlButtons";
 import { MdOutlineAssignment } from "react-icons/md";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link} from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Assignment } from "./reducer";
+import { addAssignment, deleteAssignment, editAssignment, updateAssignment } from "./reducer";
 import * as db from "../../Database";
+import { useState } from "react";
+import RoleProtected from "../../RoleProtected";
 
 
 export default function Assignments() {
   const { cid } = useParams();
-  const assignments = db.assignments;
-  const courseAssignments = assignments.filter(assignment => assignment.course === cid);
+  const dispatch = useDispatch();
+  const assignments: Assignment[] = useSelector((state: any) => state.assignments.assignments);
+  const [assignmentName, setAssignmentName] = useState("");
+  const courseAssignments = assignments.filter((assignment) => assignment.course === cid);
   return (
     <div>
-      <AssignmentControls /><br /><br /><br /><br />
+      <AssignmentControls cid={cid ?? ""}/><br /><br /><br /><br />
         <ul id="wd-assignments" className="list-group rounded-0">
           <li className="wd-assignments list-group-item p-0 mb-5 fs-5 border-gray">
             <div className="wd-title p-3 ps-2 bg-secondary"> 
@@ -36,17 +43,24 @@ export default function Assignments() {
                   <BsGripVertical className="me-2 fs-3" />
                   <MdOutlineAssignment className="me-3 fs-3" />
                     <div>
+                      <RoleProtected allowedRole="FACULTY">
                       <Link className="wd-assignment-link"
                         to={`/Kanbas/Courses/${cid}/Assignments/${assignment._id}`}>
                         {assignment.title}
-                      </Link>
+                      </Link></RoleProtected>
+                      <RoleProtected allowedRole="STUDENT">
+                        <span className="wd-assignment-title">{assignment.title}</span>
+                      </RoleProtected>
+                      <RoleProtected allowedRole="TA">
+                        <span className="wd-assignment-title">{assignment.title}</span>
+                      </RoleProtected>
                     <p>
                       Multiple Modules | <strong>{status} </strong> {startDate} at {startTime} |<br/> 
                       <strong> Due</strong> {dueDate} at {dueTime} | {points} pts
                     </p>
                     </div>
                   </div>
-                  <LessonControlButtons />
+                  <LessonControlButtons assignmentId={assignment._id}/>
                 </li> 
                 );  
               })}
