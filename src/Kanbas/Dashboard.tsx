@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import * as db from "./Database";
 import RoleProtected from "./RoleProtected";
-import { addEnrollment, deleteEnrollment, resetEnrollments } from "./EnrollmentReducer";
-import ProtectedRoute from "./Account/ProtectedRoute";
+import { addEnrollment, deleteEnrollment } from "./EnrollmentReducer";
 
 export default function Dashboard(
   { courses, course, setCourse, addNewCourse,
@@ -18,8 +17,12 @@ export default function Dashboard(
   const enrollments = useSelector((state: any) => state.enrollments.enrollments);
   const userEnrollments = enrollments.filter((enrollment: any) => enrollment.user === currentUser._id);
   const enrolledCourseIds = userEnrollments.map((enrollment: any) => enrollment.course);
-  const userCourses = courses.filter(course => enrolledCourseIds.includes(course._id));
-  
+  const userCourses = courses.filter((course) =>
+  enrollments.some((enrollment: { user: string; course: string }) =>
+    enrollment.user === currentUser._id &&
+    enrollment.course === course._id
+  )
+  );
   const [showAllCourses, setShowAllCourses] = useState(false);
   const toggleEnrollments = () => setShowAllCourses((prev) => !prev);
   const coursesDisplayed = showAllCourses? courses : userCourses;
@@ -35,6 +38,7 @@ export default function Dashboard(
       dispatch(addEnrollment(newEnrollment));
     }
   };
+
   useEffect(() => {
     const savedEnrollments = JSON.parse(localStorage.getItem("enrollments") || "[]");
     savedEnrollments.forEach((enrollment: any) => {
@@ -43,11 +47,6 @@ export default function Dashboard(
       }
     });
   }, [dispatch, currentUser._id]);
-
-
-  // window.addEventListener("beforeunload", () => {
-  //   localStorage.removeItem("enrollments");
-  // });
   
   return (
     <div id="wd-dashboard">
@@ -55,7 +54,6 @@ export default function Dashboard(
         <h1 id="wd-dashboard-title">Dashboard</h1> 
         {/* only student is allowed to enroll */}
         <RoleProtected allowedRole="STUDENT">
-
           <button  className="btn btn-primary float-end" onClick={toggleEnrollments}>
             Enrollments
           </button>
