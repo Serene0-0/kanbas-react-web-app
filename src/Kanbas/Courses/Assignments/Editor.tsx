@@ -1,5 +1,5 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
-import * as db from "../../Database";
+import * as assignmentsClient from "./client";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import { Assignment, addAssignment, updateAssignment } from "./reducer";
@@ -19,7 +19,7 @@ export default function AssignmentEditor() {
   const [startDate, setStartDate] = useState(assignment ? assignment.startDate : "");
   const [endDate, setEndDate] = useState(assignment ? assignment.endDate : "");
   
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!cid) {
       console.error("Course ID is missing.");
       return;
@@ -30,17 +30,27 @@ export default function AssignmentEditor() {
         title,
         course: cid
       };
-      dispatch(addAssignment(newAssignment));
+      try {
+        const createdAssignment = await assignmentsClient.createAssignmentForCourse(
+          cid,
+          newAssignment
+        );
+        dispatch(addAssignment(createdAssignment));
+      } catch (error) {
+        console.error("Failed to create assignment:", error);
+      }
     } else {
-      dispatch(updateAssignment({
+      const updatedAssignment: Assignment = {
         _id: aid!,
         title,
-        points,
-        dueDate,
-        startDate,
-        endDate,
         course: cid,
-      }));
+      };
+      try {
+        await assignmentsClient.updateAssignment(updatedAssignment);
+        dispatch(updateAssignment(updatedAssignment));
+      } catch (error) {
+        console.error("Failed to update assignment:", error);
+      }
     }
 
     navigate(`/Kanbas/Courses/${cid}/Assignments`);

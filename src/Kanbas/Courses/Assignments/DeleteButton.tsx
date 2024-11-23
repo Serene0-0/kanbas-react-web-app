@@ -2,16 +2,23 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { FaTrash } from "react-icons/fa";
 import { deleteAssignment } from "./reducer";
+import * as assignmentsClient from "./client";
 
 export default function DeleteButton ({ assignmentId }: { assignmentId: string }) {
     const dispatch = useDispatch();
+      
     const [showDialog, setShowDialog] = useState(false);
     const handleDeleteClick = () => {
         setShowDialog(true);
     };
-    const confirmDelete = () => {
-        dispatch(deleteAssignment(assignmentId));
-        setShowDialog(false);
+    const confirmDelete = async () => {
+        try {
+            await assignmentsClient.deleteAssignment(assignmentId);
+            dispatch(deleteAssignment(assignmentId));
+            setShowDialog(false);
+        } catch (error) {
+            console.error("Failed to delete assignment:", error);
+        }
     };
     const cancelDelete = () => {
         setShowDialog(false);

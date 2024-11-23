@@ -6,18 +6,25 @@ import { MdOutlineAssignment } from "react-icons/md";
 import { useParams, Link} from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Assignment } from "./reducer";
-import { addAssignment, deleteAssignment, editAssignment, updateAssignment } from "./reducer";
-import * as db from "../../Database";
-import { useState } from "react";
+import { setAssignments } from "./reducer";
+import { useEffect, useState } from "react";
 import RoleProtected from "../../RoleProtected";
-
+import * as coursesClient from "../client";
 
 export default function Assignments() {
   const { cid } = useParams();
   const dispatch = useDispatch();
+
+  const fetchAssignments = async () => {
+    const assignments = await coursesClient.findAssignmentsForCourse(cid as string);
+    dispatch(setAssignments(assignments));
+  };
+  useEffect(() => {
+    fetchAssignments();
+  }, []);
+
   const assignments: Assignment[] = useSelector((state: any) => state.assignments.assignments);
   const [assignmentName, setAssignmentName] = useState("");
-  const courseAssignments = assignments.filter((assignment) => assignment.course === cid);
   return (
     <div>
       <AssignmentControls cid={cid ?? ""}/><br /><br /><br /><br />
@@ -30,7 +37,7 @@ export default function Assignments() {
             </div>
             
             <ul className="wd-assignments list-group rounded-0">
-              {courseAssignments.map((assignment) => {
+              {assignments.map((assignment) => {
                 const status = assignment.status || "Not available until"
                 const startDate = assignment.startDate || "Not specified";
                 const startTime = assignment.startTime || "12:00 am";

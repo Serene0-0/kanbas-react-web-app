@@ -14,13 +14,16 @@ type Assignment = {
 };
 
 const initialState = {
-  assignments: assignments ,
+  assignments: [] as Assignment[] ,
 };
 
 const assignmentsSlice = createSlice({
     name: "assignments",
     initialState,
     reducers: {
+      setAssignments: (state, action) => {
+        state.assignments = action.payload;
+      },
       addAssignment: (state, { payload: Assignment }) => {
         const newAssignment: any = {
           _id: new Date().getTime().toString(),
@@ -51,7 +54,7 @@ const assignmentsSlice = createSlice({
       },
     },
   });
-  export const { addAssignment, deleteAssignment, updateAssignment, editAssignment } =
+  export const { addAssignment, deleteAssignment, updateAssignment, editAssignment, setAssignments } =
     assignmentsSlice.actions;
   export type {Assignment};
   export default assignmentsSlice.reducer;

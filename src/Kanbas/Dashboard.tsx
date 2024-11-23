@@ -1,41 +1,49 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import * as db from "./Database";
 import RoleProtected from "./RoleProtected";
 import { addEnrollment, deleteEnrollment } from "./EnrollmentReducer";
+import * as enrollmentClient from "./enrollmentsClient";
 
 export default function Dashboard(
-  { courses, course, setCourse, addNewCourse,
-    deleteCourse, updateCourse }: {
-    courses: any[]; course: any; setCourse: (course: any) => void;
+  { courses, userCourses, course, setCourse, addNewCourse,
+    deleteCourse, updateCourse, fetchCourses, fetchAllCourses }: {
+    courses: any[]; userCourses: any[]; course: any; setCourse: (course: any) => void;
     addNewCourse: () => void; deleteCourse: (course: any) => void;
-    updateCourse: () => void; }) 
+    updateCourse: () => void; fetchCourses: () => void;
+    fetchAllCourses: () => void;}) 
   {
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state: any) => state.accountReducer);
-  const enrollments = useSelector((state: any) => state.enrollments.enrollments);
-  const userEnrollments = enrollments.filter((enrollment: any) => enrollment.user === currentUser._id);
-  const enrolledCourseIds = userEnrollments.map((enrollment: any) => enrollment.course);
-  const userCourses = courses.filter((course) =>
-  enrollments.some((enrollment: { user: string; course: string }) =>
-    enrollment.user === currentUser._id &&
-    enrollment.course === course._id
-  )
-  );
+  // const enrollments = useSelector((state: any) => state.enrollments.enrollments);
+  // const userEnrollments = enrollments.filter((enrollment: any) => enrollment.user === currentUser._id);
+  // const enrolledCourseIds = userEnrollments.map((enrollment: any) => enrollment.course);
+  const enrolledCourseIds = userCourses.map((course) => course._id);
   const [showAllCourses, setShowAllCourses] = useState(false);
   const toggleEnrollments = () => setShowAllCourses((prev) => !prev);
   const coursesDisplayed = showAllCourses? courses : userCourses;
-  const handleEnrollButton = (courseId: string) => {
-    if (enrolledCourseIds.includes(courseId)) {
-      dispatch(deleteEnrollment({ user: currentUser._id, course: courseId }));
-    } else {
-      const newEnrollment = {
-        _id: new Date().getTime().toString(),
-        user: currentUser._id,
-        course: courseId,
-      };
-      dispatch(addEnrollment(newEnrollment));
+  // const handleEnrollButton = async (courseId: string) => {
+  //   if (enrolledCourseIds.includes(courseId)) {
+  //     dispatch(deleteEnrollment({ user: currentUser._id, course: courseId }));
+  //   } else {
+  //     const newEnrollment = {
+  //       _id: new Date().getTime().toString(),
+  //       user: currentUser._id,
+  //       course: courseId,
+  //     };
+  //     dispatch(addEnrollment(newEnrollment));
+  //   }
+  // };
+  const handleEnrollButton = async (courseId: string) => {
+    try {
+      if (enrolledCourseIds.includes(courseId)) {
+        await enrollmentClient.deleteEnrollment(currentUser._id, courseId);
+      } else {
+        await enrollmentClient.enrollUserInCourse(currentUser._id, courseId);
+      }
+      fetchCourses();
+    } catch (error) {
+      console.error(error);
     }
   };
 

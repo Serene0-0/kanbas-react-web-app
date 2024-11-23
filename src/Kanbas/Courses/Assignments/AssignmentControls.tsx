@@ -2,7 +2,6 @@ import { FaPlus } from "react-icons/fa6";
 import { CiSearch } from "react-icons/ci";
 import { useDispatch } from "react-redux";
 import { useState } from "react";
-import { addAssignment } from "./reducer";
 import { useNavigate } from "react-router-dom";
 import RoleProtected from "../../RoleProtected";
 
