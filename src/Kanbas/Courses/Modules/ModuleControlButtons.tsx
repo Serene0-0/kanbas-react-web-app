@@ -11,8 +11,14 @@ export default function ModuleControlButtons(
   return (
     <RoleProtected allowedRole="FACULTY">
     <div className="float-end">
-      <FaPencil onClick={() => editModule(moduleId)} className="text-primary me-3" />
-      <FaTrash className="text-danger me-2 mb-1" onClick={() => deleteModule(moduleId)}/>
+      <FaPencil onClick={() => {
+                          console.log("Editing module with ID:", moduleId);
+                          editModule(moduleId);
+                        }} className="text-primary me-3" />
+      <FaTrash className="text-danger me-2 mb-1" onClick={() => {
+                                                            console.log("Editing module with ID:", moduleId);
+                                                            deleteModule(moduleId);
+                                                          }} />
       <GreenCheckmark />
       <BsPlus className="fs-4" />
       <IoEllipsisVertical className="fs-4" />

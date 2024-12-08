@@ -1,7 +1,7 @@
 import { useParams, Link, useNavigate } from "react-router-dom";
 import * as assignmentsClient from "./client";
 import { useDispatch, useSelector } from "react-redux";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Assignment, addAssignment, updateAssignment } from "./reducer";
 
 export default function AssignmentEditor() {
@@ -18,6 +18,15 @@ export default function AssignmentEditor() {
   const [dueDate, setDueDate] = useState(assignment ? assignment.dueDate : "");
   const [startDate, setStartDate] = useState(assignment ? assignment.startDate : "");
   const [endDate, setEndDate] = useState(assignment ? assignment.endDate : "");
+  useEffect(() => {
+    if (assignment) {
+      setTitle(assignment.title);
+      setPoints(assignment.points);
+      setDueDate(assignment.dueDate);
+      setStartDate(assignment.startDate);
+      setEndDate(assignment.endDate);
+    }
+  }, [assignment]);
   
   const handleSave = async () => {
     if (!cid) {
@@ -43,6 +52,10 @@ export default function AssignmentEditor() {
       const updatedAssignment: Assignment = {
         _id: aid!,
         title,
+        points,
+        dueDate,
+        startDate,
+        endDate,
         course: cid,
       };
       try {

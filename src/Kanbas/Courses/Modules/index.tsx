@@ -4,7 +4,6 @@ import {BsGripVertical} from 'react-icons/bs';
 import LessonControlButtons from './LessonControlButtons';
 import ModuleControlButtons from './ModuleControlButtons';
 import { useParams } from "react-router";
-import * as db from "../../Database";
 import { setModules, addModule, editModule, updateModule, deleteModule } from "./reducer";
 import { useSelector, useDispatch } from "react-redux";
 import * as coursesClient from "../client";
@@ -20,6 +19,10 @@ export default function Modules() {
     dispatch(updateModule(module));
   };
   const removeModule = async (moduleId: string) => {
+    if (!/^[0-9a-fA-F]{24}$/.test(moduleId)) {
+      console.error("Invalid module ID:", moduleId);
+      return;
+    }
     await modulesClient.deleteModule(moduleId);
     dispatch(deleteModule(moduleId));
   };
@@ -61,7 +64,7 @@ export default function Modules() {
                     defaultValue={module.name}/>
             )}
 
-            <ModuleControlButtons moduleId={module._id} 
+            <ModuleControlButtons moduleId={module._id?.toString()} 
                                   deleteModule={(moduleId) => removeModule(moduleId)}
                                   editModule={(moduleId) => dispatch(editModule(moduleId))}/>
           </div>

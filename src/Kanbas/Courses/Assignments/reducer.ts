@@ -10,6 +10,8 @@ type Assignment = {
   startTime?: string;
   dueDate?: string;
   dueTime?: string;
+  endDate?: string;
+  endTime?: string;
   points?: number;
 };
 
